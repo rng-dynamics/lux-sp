@@ -1,0 +1,47 @@
+name: Sanitize
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  BUILD_TYPE: RelWithDebInfo
+  CC: clang
+  CXX: clang++
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        values: [{target-compile-options: '', target-link-libraries: ''}, {target-compile-options: -fsanitize=address
+              -fno-omit-frame-pointer -fno-common, target-link-libraries: -fsanitize=address},
+          {target-compile-options: -fsanitize=thread -fno-omit-frame-pointer -fno-common,
+            target-link-libraries: -fsanitize=thread}, {target-compile-options: -fsanitize=undefined
+              -fno-omit-frame-pointer -fno-common, target-link-libraries: -fsanitize=undefined}]
+          ## Memory sanitizer does not work out of the box with Google Test. Here is why and how we could fix it:
+          ## https://github.com/google/sanitizers/wiki/MemorySanitizerLibcxxHowTo
+          # {target-compile-options: "-fsanitize=memory -fno-omit-frame-pointer -fno-common", target-link-libraries: "-fsanitize=memory"},
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      run: |
+        echo "target-compile-options: [${{ matrix.values.target-compile-options }}]"
+        echo "target-link-libraries: [${{ matrix.values.target-link-libraries }}]"
+        cmake \
+          -B ${{github.workspace}}/build \
+          -D CMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+          -D TARGET_DEFAULT_COMPILE_OPTIONS="${{matrix.values.target-compile-options}}" \
+          -D TARGET_DEFAULT_LINK_LIBRARIES="${{matrix.values.target-link-libraries}}"
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest
+

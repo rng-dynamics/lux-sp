@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        build-type: [Debug, RelWithDebInfo, Release]
+        compiler: [{cxx: g++, cc: gcc}, {cxx: clang++, cc: clang}]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure CMake
+      env:
+        BUILD_TYPE: ${{ matrix.build-type }}
+        CXX: ${{ matrix.compiler.cxx }}
+        CC: ${{ matrix.compiler.cc }}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build
+
