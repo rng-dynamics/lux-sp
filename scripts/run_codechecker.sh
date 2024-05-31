@@ -36,7 +36,7 @@ SOURCE_CODE_ROOT_DIR=${SOURCE_CODE_ROOT_DIR:-"$WORKING_DIR/lux_sp"}
 
 # list of source code files to analyze
 # note: codechecker should analyse cpp files, not headers.
-SOURCE_CODE_FILES=${SOURCE_CODE_FILES:-$(find "$SOURCE_CODE_ROOT_DIR" -type f -name "*.cpp")}
+SOURCE_CODE_FILES=${SOURCE_CODE_FILES:-$(find "$SOURCE_CODE_ROOT_DIR" -type f -regex ".*\(c\|cc\|cpp\|cxx\)$")}
 
 
 #
