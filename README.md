@@ -6,3 +6,4 @@
 [![Static analysis](https://github.com/rng-dynamics/lux-sp/actions/workflows/code-checker.yml/badge.svg)](https://github.com/rng-dynamics/lux-sp/actions/workflows/code-checker.yml?query=branch%3Amain+)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/30306/badge.svg)](https://scan.coverity.com/projects/rng-dynamics-lux-sp)
 ![GitHub License](https://img.shields.io/github/license/rng-dynamics/lux-sp)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/rng-dynamics/lux-sp/master/LICENSE.md)
