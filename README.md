@@ -5,3 +5,4 @@
 [![Codecov](https://codecov.io/gh/rng-dynamics/lux-sp/graph/badge.svg?)](https://codecov.io/gh/rng-dynamics/lux-sp)
 [![Static analysis](https://github.com/rng-dynamics/lux-sp/actions/workflows/code-checker.yml/badge.svg)](https://github.com/rng-dynamics/lux-sp/actions/workflows/code-checker.yml?query=branch%3Amain+)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/30306/badge.svg)](https://scan.coverity.com/projects/rng-dynamics-lux-sp)
+![GitHub License](https://img.shields.io/github/license/rng-dynamics/lux-sp)
