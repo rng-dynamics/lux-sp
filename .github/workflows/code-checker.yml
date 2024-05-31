@@ -33,7 +33,7 @@ jobs:
     - name: Run code checker
       env:
         CODECHECKER_LOGFILE: ${{github.workspace}}/build/compile_commands.json
-        SOURCE_CODE_ROOT_DIR: ${{github.workspace}}/libspf
+        SOURCE_CODE_ROOT_DIR: ${{github.workspace}}/lux_sp
         PARALLEL: 2
       run: ./scripts/run_codechecker.sh
 
