@@ -1,0 +1,17 @@
+# -altera-*,
+# -fuchsia-*,
+# -llvmlibc-*, llvm libc specific warnings
+# -llvm-header-gurard, we are using "#pragma once"
+# -modernize-use-trailing-return-type, we do not use trailing return type
+---
+Checks: >
+  *,
+  -llvmlibc-*,
+  -llvm-header-guard,
+  -modernize-use-trailing-return-type
+
+# WarningsAsErrors: ''
+# SystemHeaders:   false
+# CheckOptions:
+...
+
