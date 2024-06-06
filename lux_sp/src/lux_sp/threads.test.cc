@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <lux_sp/dummy.h>
+#include <lux_sp/threads.h>
 
 namespace lux_sp {
 
@@ -14,6 +14,11 @@ public:
   TestLuxSpThreads &operator=(TestLuxSpThreads &&) = delete;
 };
 
-TEST_F(TestLuxSpThreads, Instantiation) { [[maybe_unused]] auto dummy = Dummy{}; }
+TEST_F(TestLuxSpThreads, SetThreadAffinityToCorePasses) {
+    // function under test
+    bool is_success = Threads::SetThreadAffinityToCore(0);
+
+    ASSERT_TRUE(is_success);
+}
 
 } // namespace lux_sp
