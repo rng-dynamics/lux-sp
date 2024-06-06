@@ -1,7 +1,5 @@
 #pragma once
 
-#include <lux_sp/system_calls.h>
-
 namespace lux_sp {
 
 class Threads {
@@ -13,7 +11,6 @@ public:
   Threads &operator=(Threads &&) = delete;
   ~Threads() = delete;
 
-  template <typename SystemCalls = SystemCalls>
   [[nodiscard]] static bool SetThreadAffinityToCore(int core_id) noexcept;
 };
 

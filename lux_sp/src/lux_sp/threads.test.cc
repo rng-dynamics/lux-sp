@@ -15,10 +15,13 @@ public:
 };
 
 TEST_F(TestLuxSpThreads, SetThreadAffinityToCorePasses) {
+  auto thread = std::thread([] {
     // function under test
     bool is_success = Threads::SetThreadAffinityToCore(0);
 
     ASSERT_TRUE(is_success);
+  });
+  thread.join();
 }
 
 } // namespace lux_sp
