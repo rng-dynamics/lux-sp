@@ -1,8 +1,6 @@
 #pragma once
 
-#include <atomic>
 #include <memory>
-#include <thread>
 
 #include <lux_sp/system.h>
 
