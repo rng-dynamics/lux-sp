@@ -10,12 +10,12 @@ namespace lux_sp {
 
 class ThreadSupport {
 public:
-  explicit ThreadSupport(std::unique_ptr<System> system)
+  explicit ThreadSupport(std::unique_ptr<System> system) noexcept
       : system_{std::move(system)} {}
   ThreadSupport(const ThreadSupport &) = delete;
-  ThreadSupport(ThreadSupport &&) = default;
+  ThreadSupport(ThreadSupport &&) noexcept = default;
   ThreadSupport &operator=(const ThreadSupport &) = delete;
-  ThreadSupport &operator=(ThreadSupport &&) = default;
+  ThreadSupport &operator=(ThreadSupport &&) noexcept = default;
 
   [[nodiscard]] bool SetThreadAffinityToCore(int core_id) noexcept {
     auto cpu_set = cpu_set_t{};
@@ -26,8 +26,8 @@ public:
   }
 
   template <typename Fn, typename... Args>
-  [[nodiscard]] std::unique_ptr<std::thread> CreateAndStartThread(int core_id,
-                                          Fn &&fn, Args &&...args) noexcept {
+  [[nodiscard]] std::unique_ptr<std::thread>
+  CreateAndStartThread(int core_id, Fn &&fn, Args &&...args) noexcept {
     auto is_running = std::atomic_bool{false};
     auto is_failed = std::atomic_bool{false};
 
