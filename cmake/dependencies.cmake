@@ -11,6 +11,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+set(FMT_INSTALL OFF)
 FetchContent_Declare(
     fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git
