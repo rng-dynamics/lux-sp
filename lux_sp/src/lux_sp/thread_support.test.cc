@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <lux_sp/system_mock.h>
 #include <lux_sp/thread_support.h>
 

@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <lux_sp/memory_pool.h>
 
 namespace lux_sp {
