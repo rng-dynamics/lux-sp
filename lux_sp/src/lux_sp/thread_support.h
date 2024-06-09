@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
-
 #include <lux_sp/system.h>
+
+#include <memory>
 
 namespace lux_sp {
 
-class ThreadSupport {
-public:
+class ThreadSupport final {
+ public:
   explicit ThreadSupport(std::unique_ptr<System> system) noexcept
       : system_{std::move(system)} {}
   ThreadSupport(const ThreadSupport &) = delete;
@@ -23,8 +23,8 @@ public:
                                            &cpu_set) == 0;
   }
 
-private:
+ private:
   std::unique_ptr<System> system_{};
 };
 
-} // namespace lux_sp
+}  // namespace lux_sp

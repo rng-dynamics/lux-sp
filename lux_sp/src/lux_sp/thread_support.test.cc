@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-
 #include <lux_sp/system_mock.h>
 #include <lux_sp/thread_support.h>
 
@@ -9,7 +8,7 @@ using ::testing::Return;
 using ::testing::StrictMock;
 
 class TestLuxSpThreadSupport : public testing::Test {
-protected:
+ protected:
   void SetUp() override {
     system_mock_ = std::make_unique<StrictMock<SystemMock>>();
   }
@@ -61,4 +60,4 @@ TEST_F(TestLuxSpThreadSupport, SetTrheadAffinityToCoreFails) {
   ASSERT_FALSE(is_success);
 }
 
-} // namespace lux_sp
+}  // namespace lux_sp
