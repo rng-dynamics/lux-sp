@@ -3,6 +3,8 @@
 
 namespace lux_sp {
 
+using namespace lux_sp::utility::free_functions;
+
 class TestLuxSpMemoryPool : public testing::Test {
  protected:
   void SetUp() override {}
@@ -26,9 +28,10 @@ TEST_F(TestLuxSpMemoryPool, AllocatePasses) {
   auto result = memory_pool.Allocate(42);
 
   // TODO: we need some more convenience here
-  EXPECT_TRUE(std::holds_alternative<MemoryPool<SomeType>::Success>(result));
-  EXPECT_EQ(42,
-            std::get<MemoryPool<SomeType>::Success>(result).value_->content_);
+  EXPECT_TRUE(Is<MemoryPool<SomeType>::AllocationSuccess>(result));
+  EXPECT_EQ(
+      42,
+      Get<MemoryPool<SomeType>::AllocationSuccess>(result).value_->content_);
 }
 
 }  // namespace lux_sp

@@ -1,15 +1,16 @@
 #pragma once
 
 #include <lux_sp/utility.h>
+#include <lux_sp/utility/free_functions.h>
 #include <lux_sp/utility/overload.h>
 
 #include <cstdint>
 #include <variant>
 #include <vector>
 
-namespace lux_sp {
+namespace {}
 
-namespace memory_pool {}
+namespace lux_sp {
 
 template <typename T>
 class MemoryPool final {
@@ -34,39 +35,43 @@ class MemoryPool final {
   MemoryPool &operator=(const MemoryPool &) = delete;
   MemoryPool &operator=(MemoryPool &&) noexcept = default;
 
-  struct Success {
+  // TODO: these structs should go outside of this class
+  struct AllocationSuccess {
     T *value_{};
   };
-
   struct OutOfMemoryError {};
 
-  struct Deleter {
-    Deleter(MemoryPool &mp) : mp_(mp) {}
-    void operator()(T *value) { mp_.Delete(value); }
-    MemoryPool &mp_;
-  };
-
   template <typename... Args>
-  std::variant<Success, OutOfMemoryError> Allocate(Args... args) noexcept {
+  std::variant<AllocationSuccess, OutOfMemoryError> Allocate(
+      Args... args) noexcept {
     auto entry = &store_[next_free_index_];
     Utility::Assert(entry->is_free_,
                     "logic error: memory pool entry is not free");
-    T *raw_value = &(entry->value_);
-    raw_value = new (raw_value) T{args...};  // placement new
+    T *item = &(entry->value_);
+    item = new (item) T{args...};  // placement new
     entry->is_free_ = false;
-
-    auto value = std::unique_ptr<T, Deleter>{raw_value, Deleter{*this}};
-    // TODO: continue here, convert the return of this function to the unique
-    // pointer.
 
     if (auto success = UpdateNextFreeIndex(); !success) [[unlikely]] {
       return OutOfMemoryError{};
     }
-    return Success{raw_value};
+    return AllocationSuccess{item};
   }
 
-  void Delete(T *) {
-    // Utility::Fatal("not implemented");
+  struct DeallocationSuccess {};
+  struct DeallocationError {
+    std::string_view message_{};
+  };
+
+  std::variant<DeallocationSuccess, DeallocationError> Deallocate(
+      const T *item) noexcept {
+    const Entry *entry = item - offset_of_value_in_entry;
+    const std::ptrdiff_t entry_index = entry - &store_[0];
+    Utility::Assert(0 <= entry_index && entry_index < store_.size(),
+                    "deallocation request does not belong to this memory pool");
+    Utility::Assert(!entry->is_free, "deallocation request of invalid pointer");
+    entry->value_.~T();
+    entry->is_free_ = true;
+    return DeallocationSuccess{};
   }
 
  private:
