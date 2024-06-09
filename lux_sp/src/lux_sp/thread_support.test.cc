@@ -1,5 +1,3 @@
-#include <sched.h>
-
 #include <gtest/gtest.h>
 
 #include <lux_sp/system_mock.h>
