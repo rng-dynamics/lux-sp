@@ -37,21 +37,36 @@ class MemoryPool final {
   struct Success {
     T *value_{};
   };
+
   struct OutOfMemoryError {};
+
+  struct Deleter {
+    Deleter(MemoryPool &mp) : mp_(mp) {}
+    void operator()(T *value) { mp_.Delete(value); }
+    MemoryPool &mp_;
+  };
 
   template <typename... Args>
   std::variant<Success, OutOfMemoryError> Allocate(Args... args) noexcept {
     auto entry = &store_[next_free_index_];
     Utility::Assert(entry->is_free_,
                     "logic error: memory pool entry is not free");
-    T *value = &(entry->value_);
-    value = new (value) T{args...};  // placement new
+    T *raw_value = &(entry->value_);
+    raw_value = new (raw_value) T{args...};  // placement new
     entry->is_free_ = false;
+
+    auto value = std::unique_ptr<T, Deleter>{raw_value, Deleter{*this}};
+    // TODO: continue here, convert the return of this function to the unique
+    // pointer.
 
     if (auto success = UpdateNextFreeIndex(); !success) [[unlikely]] {
       return OutOfMemoryError{};
     }
-    return Success{value};
+    return Success{raw_value};
+  }
+
+  void Delete(T *) {
+    // Utility::Fatal("not implemented");
   }
 
  private:
