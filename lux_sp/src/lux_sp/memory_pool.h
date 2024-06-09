@@ -1,6 +1,5 @@
 #pragma once
 
-#include <lux_sp/utility.h>
 #include <lux_sp/utility/free_functions.h>
 #include <lux_sp/utility/overload.h>
 
@@ -44,9 +43,10 @@ class MemoryPool final {
   template <typename... Args>
   std::variant<AllocationSuccess, OutOfMemoryError> Allocate(
       Args... args) noexcept {
+    using namespace utility::free_functions;
+
     auto entry = &store_[next_free_index_];
-    Utility::Assert(entry->is_free_,
-                    "logic error: memory pool entry is not free");
+    Assert(entry->is_free_, "logic error: memory pool entry is not free");
     T *item = &(entry->value_);
     item = new (item) T{args...};  // placement new
     entry->is_free_ = false;
@@ -64,11 +64,13 @@ class MemoryPool final {
 
   std::variant<DeallocationSuccess, DeallocationError> Deallocate(
       const T *item) noexcept {
+    using namespace utility::free_functions;
+
     const Entry *entry = item - offset_of_value_in_entry;
     const std::ptrdiff_t entry_index = entry - &store_[0];
-    Utility::Assert(0 <= entry_index && entry_index < store_.size(),
-                    "deallocation request does not belong to this memory pool");
-    Utility::Assert(!entry->is_free, "deallocation request of invalid pointer");
+    Assert(0 <= entry_index && entry_index < store_.size(),
+           "deallocation request does not belong to this memory pool");
+    Assert(!entry->is_free, "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
     return DeallocationSuccess{};
