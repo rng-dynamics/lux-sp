@@ -1,39 +1,34 @@
-set(sources 
-    "src/lux_sp/dummy.cc"
+set(headers 
+    "src/lux_sp/thread_support.h"
+    "src/lux_sp/system.h"
 )
-set(private_headers_dir
-    "private_include/"
-)
-set(public_headers_dir
-    "public_include/"
-)
-set(public_headers
-    "${public_headers_dir}/lux_sp/dummy.h"
-)
-
 
 ## Library
-add_library(lux_sp STATIC)
-target_include_directories(lux_sp
-    PRIVATE ${private_headers_dir}
-    PUBLIC ${public_headers_dir}
-)
-target_sources(lux_sp
-    PRIVATE ${sources}
-    PUBLIC FILE_SET HEADERS
-    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/${public_headers_dir}
-    FILES ${public_headers}
-)
+add_library(lux_sp OBJECT)
 target_set_default_settings(lux_sp)
+set_target_properties(lux_sp PROPERTIES LINKER_LANGUAGE CXX)
+target_sources(lux_sp
+    PUBLIC FILE_SET HEADERS
+    BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/src
+    FILES ${headers}
+)
 install(TARGETS lux_sp FILE_SET HEADERS)
+# target_link_libraries(lux_sp
+#     PUBLIC
+#     fmt
+# )
 
 
 ## Unit tests
 include(GoogleTest)
 set(test_sources
-    "src/lux_sp/dummy.test.cc"
+    "src/lux_sp/thread_support.test.cc"
 )
 add_executable(lux_sp_tests ${test_sources})
-target_link_libraries(lux_sp_tests PRIVATE lux_sp GTest::gmock_main)
+target_link_libraries(lux_sp_tests 
+    PRIVATE
+    lux_sp
+    GTest::gmock_main
+)
 target_set_default_settings(lux_sp_tests)
 gtest_discover_tests(lux_sp_tests)
