@@ -55,8 +55,6 @@ class MemoryPool final {
   }
 
  private:
-  struct UpdateNextFreeIndexSuccess {};
-
   bool UpdateNextFreeIndex() noexcept {
     const auto initial_free_index = next_free_index_;
     while (!store_[next_free_index_].is_free_) {
