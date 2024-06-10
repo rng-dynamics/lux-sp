@@ -1,9 +1,11 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <variant>
 #include <vector>
 
+#include <lux_sp/invariants.h>
 #include <lux_sp/utility/free_functions.h>
 #include <lux_sp/utility/overload.h>
 
@@ -23,7 +25,8 @@ class MemoryPool final {
                 "T value should be first entry in memory pool entry");
 
  public:
-  explicit MemoryPool(std::size_t capacity) : store_{capacity, {T{}, true}} {
+  MemoryPool(std::unique_ptr<Invariants> invariants, std::size_t capacity)
+      : invariants_{std::move(invariants)}, store_{capacity, {T{}, true}} {
     // TODO(alexander): precondition: capacity > 0
   }
   MemoryPool() = delete;
@@ -36,65 +39,62 @@ class MemoryPool final {
   MemoryPool &operator=(const MemoryPool &) = delete;
   MemoryPool &operator=(MemoryPool &&) noexcept = default;
 
-  // TODO(alexander): these structs should go outside of this class
-  struct AllocationSuccess {
-    T *value_{};
-  };
-  struct OutOfMemoryError {};
-
   template <typename... Args>
-  std::variant<AllocationSuccess, OutOfMemoryError> Allocate(
-      Args... args) noexcept {
-    using utility::free_functions::Assert;
+  std::optional<T *> Allocate(Args... args) noexcept {
+    auto next_free_index = ComputeNextFreeIndex();
+    if (!next_free_index) [[unlikely]] {
+      return {};
+    }
 
-    // TODO(alexander): first check if there is something free without
-    // mutating anything.
-    // If not, return error.
-    // If free, then start to modify.
-
-    auto entry = &store_[next_free_index_];
-    Assert(entry->is_free_, "logic error: memory pool entry is not free");
+    auto entry = &store_[free_index_];
+    invariants_->Assert(entry->is_free_,
+                        "logic error: memory pool entry is not free");
     T *item = &(entry->value_);
     new (item) T{args...};  // placement new
     entry->is_free_ = false;
 
-    if (auto success = UpdateNextFreeIndex(); !success) [[unlikely]] {
-      return OutOfMemoryError{};
-    }
-    return AllocationSuccess{item};
+    free_index_ = *next_free_index;
+
+    return item;
   }
 
   void Deallocate(const T *item) noexcept {
-    using utility::free_functions::Assert;
-
     const Entry *entry = item - offset_of_value_in_entry;
     const std::ptrdiff_t entry_index = entry - store_.data();
-    Assert(0 <= entry_index && entry_index < store_.size(),
-           "deallocation request does not belong to this memory pool");
-    Assert(!entry->is_free, "deallocation request of invalid pointer");
+    invariants_->Assert(
+        0 <= entry_index && entry_index < std::ssize(store_),
+        "deallocation request does not belong to this memory pool");
+    invariants_->Assert(!entry->is_free,
+                        "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
   }
 
  private:
-  bool UpdateNextFreeIndex() noexcept {
-    const auto initial_free_index = next_free_index_;
-    while (!store_[next_free_index_].is_free_) {
-      ++next_free_index_;
-      if (next_free_index_ == store_.size()) [[unlikely]] {
-        next_free_index_ = 0;
+  [[nodiscard]] std::optional<std::uint64_t> ComputeNextFreeIndex()
+      const noexcept {
+    const std::uint64_t store_size = std::ssize(store_);
+    auto index = free_index_;
+    for (std::uint64_t loop_index = 0; loop_index < store_size; ++loop_index) {
+      index += 1;
+      if (index >= store_size) [[unlikely]] {
+        index = 0;
       }
-      if (initial_free_index == next_free_index_) [[unlikely]] {
-        // TODO(alexander): out of memory strategy?
-        return false;
+      if (store_[index].is_free_) {
+        break;
       }
     }
-    return true;
+    if (index == free_index_) [[unlikely]] {
+      return {};
+    }
+    invariants_->Assert(store_[index].is_free_, "logic error");
+    return index;
   }
 
+  std::unique_ptr<Invariants> invariants_;
   // TODO(alexander): change from std::vector to std::array.
   std::vector<Entry> store_{};
-  std::uint64_t next_free_index_ = 0;
+  std::uint64_t free_index_ = 0;
 };
 
 }  // namespace lux_sp

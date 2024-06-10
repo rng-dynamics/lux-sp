@@ -1,20 +1,28 @@
 #include <cstdint>
+#include <memory>
+#include <utility>
 
 #include <gtest/gtest.h>
 
+#include <lux_sp/invariants.h>
 #include <lux_sp/memory_pool.h>
-#include <lux_sp/utility/free_functions.h>
+#include <lux_sp/runtime_mock.h>
 
 namespace lux_sp {
 
-using lux_sp::utility::free_functions::Get;
-using lux_sp::utility::free_functions::Is;
+using ::testing::StrictMock;
 
 class TestLuxSpMemoryPool : public testing::Test {
  protected:
-  void SetUp() override {}
+  void SetUp() override {
+    invariants_ = std::make_unique<Invariants>(
+        std::make_unique<StrictMock<RuntimeMock>>());
+  }
 
   constexpr static std::uint64_t memory_pool_size_ = 1024;
+  // we use protected member variables in test fixtures.
+  // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
+  std::unique_ptr<Invariants> invariants_;
 };
 
 struct SomeType {
@@ -23,20 +31,21 @@ struct SomeType {
 
 TEST_F(TestLuxSpMemoryPool, Instantiation) {
   // function under test
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool =
+      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
 }
 
 TEST_F(TestLuxSpMemoryPool, AllocatePasses) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool =
+      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
   const int int_value = 42;
 
   // function under test
-  auto result = memory_pool.Allocate(int_value);
+  const auto result = memory_pool.Allocate(int_value);
 
-  EXPECT_TRUE(Is<MemoryPool<SomeType>::AllocationSuccess>(result));
-  EXPECT_EQ(
-      int_value,
-      Get<MemoryPool<SomeType>::AllocationSuccess>(result).value_->content_);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_EQ(int_value,
+            (*result)->content_);  // NOLINT(bugprone-unchecked-optional-access)
 }
 
 }  // namespace lux_sp
