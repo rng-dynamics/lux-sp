@@ -13,7 +13,7 @@ Checks: >
 # WarningsAsErrors: ''
 # SystemHeaders:   false
 CheckOptions:
-  -key: "hicpp-special-member-functions.AllowSoleDefaultDtor"
-   value: "true"
+  - key: "hicpp-special-member-functions.AllowSoleDefaultDtor"
+    value: "true"
 ...
 
