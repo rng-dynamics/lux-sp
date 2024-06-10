@@ -1,19 +1,25 @@
-# -altera-*,
+# -altera-*, altera are fpga specific lints
 # -fuchsia-*,
 # -llvmlibc-*, llvm libc specific warnings
 # -llvm-header-gurard, we are using "#pragma once"
 # -modernize-use-trailing-return-type, we do not use trailing return type
+# -misc-non-private-member-variables-in-classes, this lint is covered by cppcoreguidelines-non-private-member-variables-in-classes
 ---
 Checks: >
   *,
+  -altera-*,
+  -fuchsia-*,
   -llvmlibc-*,
   -llvm-header-guard,
-  -modernize-use-trailing-return-type
+  -modernize-use-trailing-return-type,
+  -misc-non-private-member-variables-in-classes
 
 # WarningsAsErrors: ''
 # SystemHeaders:   false
 CheckOptions:
-  - key: "hicpp-special-member-functions.AllowSoleDefaultDtor"
-    value: "true"
+  - key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value: true
+  - key: hicpp-special-member-functions.AllowSoleDefaultDtor
+    value: true
 ...
 

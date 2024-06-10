@@ -118,6 +118,7 @@ cppcheckargs_file="$CODECHECKER_WORKING_DIR/cppcheckargs-file.txt"
 # create skip file
 cat > "$skip_file" <<EOF
 -/usr/*
+-*/_deps/fmt-src/*
 EOF
 
 # create tidy-args file
@@ -127,6 +128,7 @@ EOF
 
 # create cppcheck-args file
 cat >"$cppcheckargs_file" <<EOF
+--check-level=exhaustive
 --inline-suppr
 EOF
 
@@ -143,6 +145,7 @@ rm -rf "$analysis_output_dir"
     --analyzer-config \
     clang-tidy:take-config-from-directory=true \
     cppcheck:libraries=googletest.cfg \
+    --cppcheckargs "$cppcheckargs_file" \
     --tidyargs "$tidyargs_file" \
     --output "$analysis_output_dir" \
     "$CODECHECKER_LOGFILE"

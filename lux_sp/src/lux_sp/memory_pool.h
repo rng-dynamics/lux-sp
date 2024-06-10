@@ -1,13 +1,11 @@
 #pragma once
 
-#include <lux_sp/utility/free_functions.h>
-#include <lux_sp/utility/overload.h>
-
 #include <cstdint>
 #include <variant>
 #include <vector>
 
-namespace {}
+#include <lux_sp/utility/free_functions.h>
+#include <lux_sp/utility/overload.h>
 
 namespace lux_sp {
 
@@ -26,15 +24,19 @@ class MemoryPool final {
 
  public:
   explicit MemoryPool(std::size_t capacity) : store_{capacity, {T{}, true}} {
-    // TODO: precondition: capacity > 0
+    // TODO(alexander): precondition: capacity > 0
   }
   MemoryPool() = delete;
+  ~MemoryPool() {
+    // TODO(alexander): if not all memory freed, fatal error.
+    (void)nullptr;
+  }
   MemoryPool(const MemoryPool &) = delete;
   MemoryPool(MemoryPool &&) noexcept = default;
   MemoryPool &operator=(const MemoryPool &) = delete;
   MemoryPool &operator=(MemoryPool &&) noexcept = default;
 
-  // TODO: these structs should go outside of this class
+  // TODO(alexander): these structs should go outside of this class
   struct AllocationSuccess {
     T *value_{};
   };
@@ -43,12 +45,17 @@ class MemoryPool final {
   template <typename... Args>
   std::variant<AllocationSuccess, OutOfMemoryError> Allocate(
       Args... args) noexcept {
-    using namespace utility::free_functions;
+    using utility::free_functions::Assert;
+
+    // TODO(alexander): first check if there is something free without
+    // mutating anything.
+    // If not, return error.
+    // If free, then start to modify.
 
     auto entry = &store_[next_free_index_];
     Assert(entry->is_free_, "logic error: memory pool entry is not free");
     T *item = &(entry->value_);
-    item = new (item) T{args...};  // placement new
+    new (item) T{args...};  // placement new
     entry->is_free_ = false;
 
     if (auto success = UpdateNextFreeIndex(); !success) [[unlikely]] {
@@ -57,23 +64,16 @@ class MemoryPool final {
     return AllocationSuccess{item};
   }
 
-  struct DeallocationSuccess {};
-  struct DeallocationError {
-    std::string_view message_{};
-  };
-
-  std::variant<DeallocationSuccess, DeallocationError> Deallocate(
-      const T *item) noexcept {
-    using namespace utility::free_functions;
+  void Deallocate(const T *item) noexcept {
+    using utility::free_functions::Assert;
 
     const Entry *entry = item - offset_of_value_in_entry;
-    const std::ptrdiff_t entry_index = entry - &store_[0];
+    const std::ptrdiff_t entry_index = entry - store_.data();
     Assert(0 <= entry_index && entry_index < store_.size(),
            "deallocation request does not belong to this memory pool");
     Assert(!entry->is_free, "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
-    return DeallocationSuccess{};
   }
 
  private:
@@ -85,16 +85,16 @@ class MemoryPool final {
         next_free_index_ = 0;
       }
       if (initial_free_index == next_free_index_) [[unlikely]] {
-        // TODO: out of memory strategy?
+        // TODO(alexander): out of memory strategy?
         return false;
       }
     }
     return true;
   }
 
-  // TODO: change from std::vector to std::array.
+  // TODO(alexander): change from std::vector to std::array.
   std::vector<Entry> store_{};
-  uint64_t next_free_index_ = 0;
+  std::uint64_t next_free_index_ = 0;
 };
 
 }  // namespace lux_sp

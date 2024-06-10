@@ -1,14 +1,12 @@
 #pragma once
 
-#include <fmt/ostream.h>
-
 #include <iostream>
 #include <string_view>
 #include <variant>
 
-namespace lux_sp::utility {
+#include <fmt/ostream.h>
 
-namespace free_functions {
+namespace lux_sp::utility::free_functions {
 
 template <typename T, typename... Args>
 inline bool Is(const std::variant<Args...> &var) {
@@ -32,10 +30,8 @@ inline void Fatal(std::string_view message) {
 
 inline void Assert(bool condition, std::string_view message) {
   if (!condition) [[unlikely]] {
-    Fatal(std::move(message));
+    Fatal(message);
   }
 }
 
-}  // namespace free_functions
-
-}  // namespace lux_sp::utility
+}  // namespace lux_sp::utility::free_functions
