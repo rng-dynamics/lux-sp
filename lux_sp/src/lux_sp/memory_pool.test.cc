@@ -45,9 +45,9 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
       MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
-    if (!instance) {
-        FAIL();
-    }
+  if (!instance) {
+    FAIL();
+  }
 
   // function under test
   memory_pool.Delete(*instance);
