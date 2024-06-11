@@ -60,10 +60,12 @@ class MemoryPool final {
     // invariants_->Assert(item != nullptr, "deallocation request for nullptr");
     invariants_->Assert(item != nullptr, "deallocation request for nullptr");
     Entry *entry = From(item);
-    const std::ptrdiff_t entry_index = entry - store_.data();
-    invariants_->Assert(
-        0 <= entry_index && entry_index < std::ssize(store_),
-        "deallocation request does not belong to this memory pool");
+    const bool is_lower_bound_maintained = store_.data() <= entry;
+    const bool is_upper_bound_maintained = entry <= &*store_.crbegin();
+    constexpr auto assertion_message =
+        "deallocation request does not belong to this memory pool";
+    invariants_->Assert(is_lower_bound_maintained, assertion_message);
+    invariants_->Assert(is_upper_bound_maintained, assertion_message);
     invariants_->Assert(!entry->is_free_,
                         "deallocation request of invalid pointer");
     entry->value_.~T();

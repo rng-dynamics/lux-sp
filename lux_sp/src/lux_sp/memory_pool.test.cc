@@ -64,4 +64,27 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
       "deallocation request for nullptr");
 }
 
+TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
+  auto memory_pool =
+      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  const int int_value = 42;
+  std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
+  if (!instance) {
+    FAIL();
+  }
+
+  SomeType *low_address = *instance - 1;
+  // Note: memory pool entries are bigger than the instances
+  SomeType *high_address = *instance + memory_pool_size_ * 2;
+  auto cases = std::array{low_address, high_address};
+
+  for (auto &address : cases) {
+    EXPECT_EXIT(
+        // function under test
+        memory_pool.Delete(address),
+        [](int exit_value) { return exit_value != EXIT_SUCCESS; },
+        "deallocation request does not belong to this memory pool");
+  }
+}
+
 }  // namespace lux_sp
