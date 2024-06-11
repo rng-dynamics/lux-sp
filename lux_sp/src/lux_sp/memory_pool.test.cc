@@ -53,8 +53,6 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
   memory_pool.Delete(*instance);
 }
 
-// The GMock macro EXPECT_EXIT has very high cognitive complexity. We still want to use it.
-// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
   auto memory_pool =
       MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
