@@ -57,11 +57,11 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
   auto memory_pool =
       MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
 
-  // function under test
   EXPECT_EXIT(
+      // function under test
       memory_pool.Delete(nullptr),
       [](int exit_value) { return exit_value != EXIT_SUCCESS; },
-      ::testing::ContainsRegex("fatal error:"));
+      "deallocation request for nullptr");
 }
 
 }  // namespace lux_sp
