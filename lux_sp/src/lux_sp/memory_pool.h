@@ -24,8 +24,7 @@ class MemoryPool final {
                 "T value should be first entry in memory pool entry");
 
  public:
-  MemoryPool(std::unique_ptr<Invariants> invariants, std::size_t capacity)
-      : invariants_{std::move(invariants)}, store_{capacity, {T{}, true}} {
+  explicit MemoryPool(std::size_t capacity) : store_{capacity, {T{}, true}} {
     // TODO(alexander): precondition: capacity > 0
   }
   MemoryPool() = delete;
@@ -55,16 +54,16 @@ class MemoryPool final {
   }
 
   void Delete(T *item) noexcept {
-    invariants_->Assert(item != nullptr, "deallocation request for nullptr");
+    Invariants::Assert(item != nullptr, "deallocation request for nullptr");
     Entry *entry = From(item);
     const bool is_lower_bound_maintained = store_.data() <= entry;
     const bool is_upper_bound_maintained = entry <= &*store_.crbegin();
     constexpr auto assertion_message =
         "deallocation request does not belong to this memory pool";
-    invariants_->Assert(is_lower_bound_maintained, assertion_message);
-    invariants_->Assert(is_upper_bound_maintained, assertion_message);
-    invariants_->Assert(!entry->is_free_,
-                        "deallocation request of invalid pointer");
+    Invariants::Assert(is_lower_bound_maintained, assertion_message);
+    Invariants::Assert(is_upper_bound_maintained, assertion_message);
+    Invariants::Assert(!entry->is_free_,
+                       "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
   }
@@ -93,11 +92,10 @@ class MemoryPool final {
     if (index == free_index_) [[unlikely]] {
       return {};
     }
-    invariants_->Assert(store_[index].is_free_, "logic error");
+    Invariants::Assert(store_[index].is_free_, "logic error");
     return index;
   }
 
-  std::unique_ptr<Invariants> invariants_;
   // TODO(alexander): change from std::vector to std::array.
   std::vector<Entry> store_{};
   std::uint64_t free_index_ = 0;

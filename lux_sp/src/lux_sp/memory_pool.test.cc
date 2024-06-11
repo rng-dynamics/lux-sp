@@ -13,14 +13,9 @@ namespace lux_sp {
 
 class TestLuxSpMemoryPool : public testing::Test {
  protected:
-  void SetUp() override {
-    invariants_ = std::make_unique<Invariants>();
-  }
+  void SetUp() override {}
 
   constexpr static std::uint64_t memory_pool_size_ = 1024;
-  // we use protected member variables in test fixtures.
-  // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
-  std::unique_ptr<Invariants> invariants_;
 };
 
 struct SomeType {
@@ -28,8 +23,7 @@ struct SomeType {
 };
 
 TEST_F(TestLuxSpMemoryPool, CreateNewPasses) {
-  auto memory_pool =
-      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
   const int int_value = 42;
 
   // function under test
@@ -41,8 +35,7 @@ TEST_F(TestLuxSpMemoryPool, CreateNewPasses) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeletePasses) {
-  auto memory_pool =
-      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {
@@ -54,8 +47,7 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
-  auto memory_pool =
-      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
 
   EXPECT_EXIT(
       // function under test
@@ -65,8 +57,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
-  auto memory_pool =
-      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {
@@ -88,8 +79,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
-  auto memory_pool =
-      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {
