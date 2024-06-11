@@ -21,5 +21,7 @@ CheckOptions:
     value: true
   - key: hicpp-special-member-functions.AllowSoleDefaultDtor
     value: true
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: "_"
 ...
 

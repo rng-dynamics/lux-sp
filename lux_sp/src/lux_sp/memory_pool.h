@@ -39,7 +39,7 @@ class MemoryPool final {
   MemoryPool &operator=(MemoryPool &&) noexcept = default;
 
   template <typename... Args>
-  std::optional<T *> New(Args... args) noexcept {
+  [[nodiscard]] std::optional<T *> CreateNew(Args... args) noexcept {
     std::optional<uint64_t> next_free_index = ComputeNextFreeIndex();
     if (!next_free_index) [[unlikely]] {
       return {};
@@ -53,23 +53,31 @@ class MemoryPool final {
     entry->is_free_ = false;
 
     free_index_ = *next_free_index;
-
     return item;
   }
 
-  void Delete(const T *item) noexcept {
-    const Entry *entry = item - offset_of_value_in_entry;
+  void Delete(T *item) noexcept {
+    // invariants_->Assert(item != nullptr, "deallocation request for nullptr");
+    invariants_->Assert(item != nullptr, "deallocation request for nullptr");
+    Entry *entry = From(item);
     const std::ptrdiff_t entry_index = entry - store_.data();
     invariants_->Assert(
         0 <= entry_index && entry_index < std::ssize(store_),
         "deallocation request does not belong to this memory pool");
-    invariants_->Assert(!entry->is_free,
+    invariants_->Assert(!entry->is_free_,
                         "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
   }
 
  private:
+  [[nodiscard]] Entry *From(T *value) {
+    static_assert(offset_of_value_in_entry == 0,
+                  "T value should be first entry in memory pool entry");
+    // NOLINTNEXTLINE(bugprone-casting-through-void)
+    return static_cast<Entry *>(static_cast<void *>(value));
+  }
+
   [[nodiscard]] std::optional<std::uint64_t> ComputeNextFreeIndex()
       const noexcept {
     const std::uint64_t store_size = std::ssize(store_);
