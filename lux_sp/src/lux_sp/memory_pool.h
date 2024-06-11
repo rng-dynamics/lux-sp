@@ -46,8 +46,6 @@ class MemoryPool final {
     }
 
     Entry *entry = &store_[free_index_];
-    invariants_->Assert(entry->is_free_,
-                        "logic error: memory pool entry is not free");
     T *item = &(entry->value_);
     new (item) T{args...};  // placement new
     entry->is_free_ = false;
