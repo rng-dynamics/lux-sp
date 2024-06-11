@@ -87,4 +87,21 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
   }
 }
 
+TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
+  auto memory_pool =
+      MemoryPool<SomeType>{std::move(invariants_), memory_pool_size_};
+  const int int_value = 42;
+  std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
+  if (!instance) {
+    FAIL();
+  }
+  memory_pool.Delete(*instance);
+
+  EXPECT_EXIT(
+      // function under test
+      memory_pool.Delete(*instance),
+      [](int exit_value) { return exit_value != EXIT_SUCCESS; },
+      "deallocation request of invalid pointer");
+}
+
 }  // namespace lux_sp

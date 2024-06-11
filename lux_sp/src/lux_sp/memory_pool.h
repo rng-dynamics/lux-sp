@@ -57,7 +57,6 @@ class MemoryPool final {
   }
 
   void Delete(T *item) noexcept {
-    // invariants_->Assert(item != nullptr, "deallocation request for nullptr");
     invariants_->Assert(item != nullptr, "deallocation request for nullptr");
     Entry *entry = From(item);
     const bool is_lower_bound_maintained = store_.data() <= entry;
