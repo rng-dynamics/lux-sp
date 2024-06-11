@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <optional>
-#include <variant>
 #include <vector>
 
 #include <lux_sp/invariants.h>
@@ -40,13 +39,13 @@ class MemoryPool final {
   MemoryPool &operator=(MemoryPool &&) noexcept = default;
 
   template <typename... Args>
-  std::optional<T *> Allocate(Args... args) noexcept {
-    auto next_free_index = ComputeNextFreeIndex();
+  std::optional<T *> New(Args... args) noexcept {
+    std::optional<uint64_t> next_free_index = ComputeNextFreeIndex();
     if (!next_free_index) [[unlikely]] {
       return {};
     }
 
-    auto entry = &store_[free_index_];
+    Entry *entry = &store_[free_index_];
     invariants_->Assert(entry->is_free_,
                         "logic error: memory pool entry is not free");
     T *item = &(entry->value_);
@@ -58,7 +57,7 @@ class MemoryPool final {
     return item;
   }
 
-  void Deallocate(const T *item) noexcept {
+  void Delete(const T *item) noexcept {
     const Entry *entry = item - offset_of_value_in_entry;
     const std::ptrdiff_t entry_index = entry - store_.data();
     invariants_->Assert(

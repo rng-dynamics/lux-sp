@@ -41,11 +41,11 @@ TEST_F(TestLuxSpMemoryPool, AllocatePasses) {
   const int int_value = 42;
 
   // function under test
-  const auto result = memory_pool.Allocate(int_value);
+  const auto result = memory_pool.New(int_value);
 
   ASSERT_TRUE(result.has_value());
-  EXPECT_EQ(int_value,
-            (*result)->content_);  // NOLINT(bugprone-unchecked-optional-access)
+  // NOLINTNEXTLINE(bugprone-unchecked-optional-access)
+  EXPECT_EQ(int_value, (*result)->content_);
 }
 
 }  // namespace lux_sp
