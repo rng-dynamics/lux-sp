@@ -23,7 +23,7 @@ struct SomeType {
 };
 
 TEST_F(TestLuxSpMemoryPool, CreateNewPasses) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
   const int int_value = 42;
 
   // function under test
@@ -34,8 +34,20 @@ TEST_F(TestLuxSpMemoryPool, CreateNewPasses) {
   EXPECT_EQ(int_value, (*result)->content_);
 }
 
+TEST_F(TestLuxSpMemoryPool, CreateNewWhenCapacityExhaustedFails) {
+  auto memory_pool = MemoryPool<SomeType, 2>{};
+  const int int_value = 42;
+  const auto result_1 = memory_pool.CreateNew(int_value);
+  ASSERT_TRUE(result_1.has_value());
+
+  // function under test
+  const auto result = memory_pool.CreateNew(int_value);
+
+  EXPECT_FALSE(result.has_value());
+}
+
 TEST_F(TestLuxSpMemoryPool, DeletePasses) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {
@@ -47,7 +59,7 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
 
   EXPECT_EXIT(
       // function under test
@@ -57,7 +69,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {
@@ -79,7 +91,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
-  auto memory_pool = MemoryPool<SomeType>{memory_pool_size_};
+  auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
   const int int_value = 42;
   std::optional<SomeType *> instance = memory_pool.CreateNew(int_value);
   if (!instance) {

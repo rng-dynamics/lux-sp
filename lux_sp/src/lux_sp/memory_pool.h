@@ -1,8 +1,8 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <optional>
-#include <vector>
 
 #include <lux_sp/invariants.h>
 #include <lux_sp/utility/free_functions.h>
@@ -10,7 +10,7 @@
 
 namespace lux_sp {
 
-template <typename T>
+template <typename T, std::uint64_t Capacity>
 class MemoryPool final {
  private:
   struct Entry {
@@ -22,12 +22,10 @@ class MemoryPool final {
       offsetof(Entry, value_);
   static_assert(offset_of_value_in_entry == 0,
                 "T value should be first entry in memory pool entry");
+    static_assert(Capacity > 0, "Given capacity value for memory pool is less or equal to zero.");
 
  public:
-  explicit MemoryPool(std::size_t capacity) : store_{capacity, {T{}, true}} {
-    // TODO(alexander): precondition: capacity > 0
-  }
-  MemoryPool() = delete;
+  MemoryPool() = default;
   ~MemoryPool() {
     // TODO(alexander): if not all memory freed, fatal error.
     (void)nullptr;
@@ -96,8 +94,7 @@ class MemoryPool final {
     return index;
   }
 
-  // TODO(alexander): change from std::vector to std::array.
-  std::vector<Entry> store_{};
+  std::array<Entry, Capacity> store_{};
   std::uint64_t free_index_ = 0;
 };
 
