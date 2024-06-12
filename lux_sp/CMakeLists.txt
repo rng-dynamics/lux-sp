@@ -1,4 +1,5 @@
 set(headers 
+    "src/lux_sp/predicates.h"
     "src/lux_sp/memory_pool.h"
     "src/lux_sp/system.h"
     "src/lux_sp/thread_support.h"
@@ -23,6 +24,7 @@ install(TARGETS lux_sp FILE_SET HEADERS)
 ## Unit tests
 include(GoogleTest)
 set(test_sources
+    "src/lux_sp/predicates.test.cc"
     "src/lux_sp/memory_pool.test.cc"
     "src/lux_sp/thread_support.test.cc"
 )

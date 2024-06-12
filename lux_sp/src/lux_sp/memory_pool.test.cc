@@ -1,20 +1,16 @@
 #include <cstdint>
 #include <cstdlib>
-#include <memory>
 #include <optional>
-#include <utility>
 
 #include <gtest/gtest.h>
 
-#include <lux_sp/invariants.h>
 #include <lux_sp/memory_pool.h>
+#include <lux_sp/predicates.h>
 
 namespace lux_sp {
 
 class TestLuxSpMemoryPool : public testing::Test {
  protected:
-  void SetUp() override {}
-
   constexpr static std::uint64_t memory_pool_size_ = 1024;
 };
 
@@ -63,8 +59,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
 
   EXPECT_EXIT(
       // function under test
-      memory_pool.Delete(nullptr),
-      [](int exit_value) { return exit_value != EXIT_SUCCESS; },
+      memory_pool.Delete(nullptr), ::testing::KilledBySignal(SIGABRT),
       "deallocation request for nullptr");
 }
 
@@ -84,8 +79,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
   for (auto &address : cases) {
     EXPECT_EXIT(
         // function under test
-        memory_pool.Delete(address),
-        [](int exit_value) { return exit_value != EXIT_SUCCESS; },
+        memory_pool.Delete(address), ::testing::KilledBySignal(SIGABRT),
         "deallocation request does not belong to this memory pool");
   }
 }
@@ -101,8 +95,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
 
   EXPECT_EXIT(
       // function under test
-      memory_pool.Delete(*instance),
-      [](int exit_value) { return exit_value != EXIT_SUCCESS; },
+      memory_pool.Delete(*instance), ::testing::KilledBySignal(SIGABRT),
       "deallocation request of invalid pointer");
 }
 
