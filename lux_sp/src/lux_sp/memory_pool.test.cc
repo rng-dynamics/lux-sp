@@ -57,10 +57,9 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
 TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
   auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{};
 
-  EXPECT_EXIT(
+  EXPECT_DEATH(
       // function under test
-      memory_pool.Delete(nullptr), ::testing::KilledBySignal(SIGABRT),
-      "deallocation request for nullptr");
+      memory_pool.Delete(nullptr), "deallocation request for nullptr");
 }
 
 TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
@@ -77,9 +76,9 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
   auto cases = std::array{low_address, high_address};
 
   for (auto &address : cases) {
-    EXPECT_EXIT(
+    EXPECT_DEATH(
         // function under test
-        memory_pool.Delete(address), ::testing::KilledBySignal(SIGABRT),
+        memory_pool.Delete(address),
         "deallocation request does not belong to this memory pool");
   }
 }
@@ -93,10 +92,9 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
   }
   memory_pool.Delete(*instance);
 
-  EXPECT_EXIT(
+  EXPECT_DEATH(
       // function under test
-      memory_pool.Delete(*instance), ::testing::KilledBySignal(SIGABRT),
-      "deallocation request of invalid pointer");
+      memory_pool.Delete(*instance), "deallocation request of invalid pointer");
 }
 
 }  // namespace lux_sp

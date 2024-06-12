@@ -5,6 +5,8 @@
 
 #include <fmt/ostream.h>
 
+extern "C" void __gcov_dump();
+
 namespace lux_sp {
 
 class Predicates final {
@@ -24,6 +26,8 @@ class Predicates final {
 
   static void FatalError(std::string_view message) noexcept {
     fmt::print(std::cerr, "fatal error: {}\n", message);
+    // TODO: use injection instead of direct call
+    __gcov_dump();
     std::terminate();
   }
 };

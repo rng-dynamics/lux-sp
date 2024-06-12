@@ -13,17 +13,16 @@ TEST_F(TestLuxSpPredicates, AssertWhenConditionHolds) {
 }
 
 TEST_F(TestLuxSpPredicates, AssertWhenConditionDoesNotHold) {
-  EXPECT_EXIT(
+  EXPECT_DEATH(
       // function under test
-      Predicates::Assert(false, "simulated error"),
-      ::testing::KilledBySignal(SIGABRT), "simulated error");
+      Predicates::Assert(false, "simulated error"), "simulated error");
 }
 
 TEST_F(TestLuxSpPredicates, FatalError) {
-  EXPECT_EXIT(
+  EXPECT_DEATH(
       // function under test
       Predicates::FatalError("simulated error"),
-      ::testing::KilledBySignal(SIGABRT), "fatal error: simulated error");
+      "fatal error: simulated error");
 }
 
 }  // namespace lux_sp

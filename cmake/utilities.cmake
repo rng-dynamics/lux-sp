@@ -53,6 +53,7 @@ if (ENABLE_CODECOVERAGE)
         "--root" "${PROJECT_SOURCE_DIR}"
         "--filter" "${PROJECT_SOURCE_DIR}/lux_sp"
         "--exclude" ".*.test.cc"  # exclude test files from coverage
+        "--exclude" ".*_mock.h"  # exclude mocks from coverage
         "--exclude-unreachable-branches"
         # "--exclude-throw-branches"
         "--cobertura" "${GCOVR_OUTPUT_DIR}/cobertura.xml"
