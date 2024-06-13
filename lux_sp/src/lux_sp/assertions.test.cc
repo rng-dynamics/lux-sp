@@ -1,17 +1,14 @@
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <lux_sp/assertions.h>
 #include <lux_sp/no_return_mock.h>
-
-using ::testing::StrictMock;
 
 namespace lux_sp {
 
 class TestLuxSpAssertions : public testing::Test {
  protected:
   void SetUp() override {
-    no_return_mock_ = std::make_unique<StrictMock<NoReturnMock>>();
+    no_return_mock_ = std::make_unique<NoReturnMock>();
   }
   std::unique_ptr<NoReturnMock> no_return_mock_;
 };
