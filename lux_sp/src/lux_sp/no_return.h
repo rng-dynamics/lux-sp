@@ -2,9 +2,9 @@
 
 namespace lux_sp {
 
-class Exit {
+class NoReturn {
  public:
-  virtual ~Exit() = default;
+  virtual ~NoReturn() = default;
 
   [[noreturn]] virtual void QuickExit(int status) const = 0;
 };

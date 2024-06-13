@@ -2,15 +2,15 @@
 
 #include <cstdlib>
 
-#include <lux_sp/exit.h>
+#include <lux_sp/no_return.h>
 
 extern "C" void __gcov_dump();
 
 namespace lux_sp {
 
-class ExitMock : public Exit {
+class NoReturnMock : public NoReturn {
  public:
-  ~ExitMock() override = default;
+  ~NoReturnMock() override = default;
 
   [[noreturn]] void QuickExit(int status) const override {
     __gcov_dump();

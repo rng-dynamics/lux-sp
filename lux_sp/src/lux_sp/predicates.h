@@ -6,14 +6,14 @@
 
 #include <fmt/ostream.h>
 
-#include <lux_sp/exit.h>
+#include <lux_sp/no_return.h>
 
 namespace lux_sp {
 
 class Predicates final {
  public:
-  explicit Predicates(std::unique_ptr<Exit> exit) noexcept
-      : exit_(std::move(exit)) {}
+  explicit Predicates(std::unique_ptr<NoReturn> exit) noexcept
+      : no_return_(std::move(exit)) {}
   ~Predicates() noexcept = default;
   Predicates(const Predicates &) = delete;
   Predicates(Predicates &&) noexcept = default;
@@ -28,11 +28,11 @@ class Predicates final {
 
   void FatalError(std::string_view message) noexcept {
     fmt::print(std::cerr, "fatal error: {}\n", message);
-    exit_->QuickExit(EXIT_FAILURE);
+    no_return_->QuickExit(EXIT_SUCCESS);
   }
 
  private:
-  std::unique_ptr<Exit> exit_;
+  std::unique_ptr<NoReturn> no_return_;
 };
 
 }  // namespace lux_sp
