@@ -1,8 +1,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <lux_sp/no_return_mock.h>
 #include <lux_sp/assertions.h>
+#include <lux_sp/no_return_mock.h>
 
 using ::testing::StrictMock;
 

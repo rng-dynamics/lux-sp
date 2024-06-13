@@ -5,9 +5,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <lux_sp/no_return_mock.h>
-#include <lux_sp/memory_pool.h>
 #include <lux_sp/assertions.h>
+#include <lux_sp/memory_pool.h>
+#include <lux_sp/no_return_mock.h>
 
 using ::testing::StrictMock;
 
@@ -41,8 +41,8 @@ TEST_F(TestLuxSpMemoryPool, CreateNewPasses) {
 }
 
 TEST_F(TestLuxSpMemoryPool, CreateNewWhenCapacityExhaustedFails) {
-  auto memory_pool =
-      MemoryPool<SomeType, 2>{std::make_unique<Assertions>(std::move(no_return_))};
+  auto memory_pool = MemoryPool<SomeType, 2>{
+      std::make_unique<Assertions>(std::move(no_return_))};
   const int int_value = 42;
   const auto result_1 = memory_pool.CreateNew(int_value);
   ASSERT_TRUE(result_1.has_value());
