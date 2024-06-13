@@ -31,7 +31,7 @@ class MemoryPool final {
       : assertions_{std::move(assertions)} {}
   MemoryPool() = delete;
   ~MemoryPool() {
-    // TODO(alexander): if not all memory freed, fatal error.
+    // TODO(alexander): if not all memory freed, the free it here.
     (void)nullptr;
   }
   MemoryPool(const MemoryPool &) = delete;
@@ -74,6 +74,7 @@ class MemoryPool final {
   [[nodiscard]] Entry *From(T *value) {
     static_assert(offset_of_value_in_entry == 0,
                   "T value should be first entry in memory pool entry");
+    // TODO(alexander): replace by reinterpret_cast
     // NOLINTNEXTLINE(bugprone-casting-through-void)
     return static_cast<Entry *>(static_cast<void *>(value));
   }
