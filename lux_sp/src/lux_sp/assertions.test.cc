@@ -2,13 +2,13 @@
 #include <gtest/gtest.h>
 
 #include <lux_sp/no_return_mock.h>
-#include <lux_sp/predicates.h>
+#include <lux_sp/assertions.h>
 
 using ::testing::StrictMock;
 
 namespace lux_sp {
 
-class TestLuxSpPredicates : public testing::Test {
+class TestLuxSpAssertions : public testing::Test {
  protected:
   void SetUp() override {
     no_return_mock_ = std::make_unique<StrictMock<NoReturnMock>>();
@@ -16,22 +16,22 @@ class TestLuxSpPredicates : public testing::Test {
   std::unique_ptr<NoReturnMock> no_return_mock_;
 };
 
-TEST_F(TestLuxSpPredicates, AssertWhenConditionHolds) {
+TEST_F(TestLuxSpAssertions, AssertWhenConditionHolds) {
   // function under test
-  Predicates{std::move(no_return_mock_)}.Assert(true, "no error");
+  Assertions{std::move(no_return_mock_)}.Assert(true, "no error");
 }
 
-TEST_F(TestLuxSpPredicates, AssertWhenConditionDoesNotHold) {
+TEST_F(TestLuxSpAssertions, AssertWhenConditionDoesNotHold) {
   EXPECT_DEATH(
       // function under test
-      Predicates{std::move(no_return_mock_)}.Assert(false, "simulated error"),
+      Assertions{std::move(no_return_mock_)}.Assert(false, "simulated error"),
       "simulated error");
 }
 
-TEST_F(TestLuxSpPredicates, FatalError) {
+TEST_F(TestLuxSpAssertions, FatalError) {
   EXPECT_DEATH(
       // function under test
-      Predicates{std::move(no_return_mock_)}.FatalError("simulated error"),
+      Assertions{std::move(no_return_mock_)}.FatalError("simulated error"),
       "fatal error: simulated error");
 }
 

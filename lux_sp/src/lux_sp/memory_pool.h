@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <optional>
 
-#include <lux_sp/predicates.h>
+#include <lux_sp/assertions.h>
 #include <lux_sp/utility/free_functions.h>
 #include <lux_sp/utility/overload.h>
 
@@ -27,8 +27,8 @@ class MemoryPool final {
       "Given capacity value for memory pool is less or equal to zero.");
 
  public:
-  explicit MemoryPool(std::unique_ptr<Predicates> predicates)
-      : predicates_{std::move(predicates)} {}
+  explicit MemoryPool(std::unique_ptr<Assertions> assertions)
+      : assertions_{std::move(assertions)} {}
   MemoryPool() = delete;
   ~MemoryPool() {
     // TODO(alexander): if not all memory freed, fatal error.
@@ -56,15 +56,15 @@ class MemoryPool final {
   }
 
   void Delete(T *item) noexcept {
-    predicates_->Assert(item != nullptr, "deallocation request for nullptr");
+    assertions_->Assert(item != nullptr, "deallocation request for nullptr");
     Entry *entry = From(item);
     const bool is_lower_bound_maintained = store_.data() <= entry;
     const bool is_upper_bound_maintained = entry <= &*store_.crbegin();
     constexpr auto assertion_message =
         "deallocation request does not belong to this memory pool";
-    predicates_->Assert(is_lower_bound_maintained, assertion_message);
-    predicates_->Assert(is_upper_bound_maintained, assertion_message);
-    predicates_->Assert(!entry->is_free_,
+    assertions_->Assert(is_lower_bound_maintained, assertion_message);
+    assertions_->Assert(is_upper_bound_maintained, assertion_message);
+    assertions_->Assert(!entry->is_free_,
                         "deallocation request of invalid pointer");
     entry->value_.~T();
     entry->is_free_ = true;
@@ -94,11 +94,11 @@ class MemoryPool final {
     if (index == free_index_) [[unlikely]] {
       return {};
     }
-    predicates_->Assert(store_[index].is_free_, "logic error");
+    assertions_->Assert(store_[index].is_free_, "logic error");
     return index;
   }
 
-  std::unique_ptr<Predicates> predicates_;
+  std::unique_ptr<Assertions> assertions_;
   std::array<Entry, Capacity> store_{};
   std::uint64_t free_index_ = 0;
 };

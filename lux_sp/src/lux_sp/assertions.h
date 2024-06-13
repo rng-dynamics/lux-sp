@@ -10,15 +10,15 @@
 
 namespace lux_sp {
 
-class Predicates final {
+class Assertions final {
  public:
-  explicit Predicates(std::unique_ptr<NoReturn> exit) noexcept
+  explicit Assertions(std::unique_ptr<NoReturn> exit) noexcept
       : no_return_(std::move(exit)) {}
-  ~Predicates() noexcept = default;
-  Predicates(const Predicates &) = delete;
-  Predicates(Predicates &&) noexcept = default;
-  Predicates &operator=(const Predicates &) = delete;
-  Predicates &operator=(Predicates &&) noexcept = default;
+  ~Assertions() noexcept = default;
+  Assertions(const Assertions &) = delete;
+  Assertions(Assertions &&) noexcept = default;
+  Assertions &operator=(const Assertions &) = delete;
+  Assertions &operator=(Assertions &&) noexcept = default;
 
   void Assert(bool condition, std::string_view message) noexcept {
     if (!condition) [[unlikely]] {
@@ -28,7 +28,7 @@ class Predicates final {
 
   void FatalError(std::string_view message) noexcept {
     fmt::print(std::cerr, "fatal error: {}\n", message);
-    no_return_->QuickExit(EXIT_SUCCESS);
+    no_return_->QuickExit(EXIT_FAILURE);
   }
 
  private:
