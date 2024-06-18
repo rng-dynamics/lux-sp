@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <optional>
@@ -31,8 +32,11 @@ class MemoryPool final {
       : assertions_{std::move(assertions)} {}
   MemoryPool() = delete;
   ~MemoryPool() {
-    // TODO(alexander): if not all memory freed, the free it here.
-    (void)nullptr;
+    for (auto &entry : store_) {
+      if (!entry.is_free_) {
+        Delete(&entry.value_);
+      }
+    }
   }
   MemoryPool(const MemoryPool &) = delete;
   MemoryPool(MemoryPool &&) noexcept = default;

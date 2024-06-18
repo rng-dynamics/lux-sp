@@ -4,8 +4,9 @@
 
 #include <lux_sp/no_return.h>
 
-// TODO(alexander): add #ifdef GCOV
+#ifdef ENABLE_GCOV
 extern "C" void __gcov_dump();
+#endif
 
 namespace lux_sp {
 
