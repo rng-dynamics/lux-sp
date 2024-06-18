@@ -22,8 +22,6 @@ class TestLuxSpThreadSupport : public testing::Test {
     system_mock_ = std::make_unique<StrictMock<SystemMock>>();
   }
 
-  // we use protected member variables in test fixtures.
-  // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
   std::unique_ptr<SystemMock> system_mock_;
 };
 

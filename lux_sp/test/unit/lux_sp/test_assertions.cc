@@ -14,8 +14,6 @@ class TestLuxSpAssertions : public testing::Test {
     no_return_mock_ = std::make_unique<NoReturnMock>();
   }
 
-  // we use protected member variables in test fixtures.
-  // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
   std::unique_ptr<NoReturnMock> no_return_mock_;
 };
 

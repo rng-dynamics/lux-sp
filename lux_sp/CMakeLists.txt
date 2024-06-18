@@ -25,15 +25,19 @@ install(TARGETS lux_sp FILE_SET HEADERS)
 ## Unit tests
 include(GoogleTest)
 set(test_sources
-    "src/lux_sp/assertions.test.cc"
-    "src/lux_sp/memory_pool.test.cc"
-    "src/lux_sp/thread_support.test.cc"
+    "test/unit/lux_sp/test_assertions.cc"
+    "test/unit/lux_sp/test_memory_pool.cc"
+    "test/unit/lux_sp/test_thread_support.cc"
 )
 add_executable(lux_sp_tests ${test_sources})
 target_link_libraries(lux_sp_tests 
     PRIVATE
     lux_sp
     GTest::gmock_main
+)
+target_include_directories(lux_sp_tests
+    PRIVATE
+    "test/"
 )
 target_set_default_settings(lux_sp_tests)
 gtest_discover_tests(lux_sp_tests)

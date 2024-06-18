@@ -1,3 +1,2 @@
 ignore:
-  - "**/*_mock.h"
-  - "**/*.test.cc"
+  - "**/test/" # ignore folder test/ and all its content
