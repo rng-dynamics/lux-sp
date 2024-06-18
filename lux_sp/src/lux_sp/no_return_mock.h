@@ -5,6 +5,9 @@
 #include <lux_sp/no_return.h>
 
 #ifdef ENABLE_GCOV
+// This function declaration references a reserved symbol. I.e., we have to use
+// the reserved name which violates some lints.
+// NOLINTNEXTLINE(bugprone-reserved-identifier,cert-dcl37-c,cert-dcl51-cpp)
 extern "C" void __gcov_dump();
 #endif
 

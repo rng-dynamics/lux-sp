@@ -1,6 +1,9 @@
+#include <array>
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <optional>
+#include <utility>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -16,9 +19,11 @@ namespace lux_sp {
 class TestLuxSpMemoryPool : public testing::Test {
  protected:
   void SetUp() override {
-    no_return_ = std::make_unique<NoReturnMock>();
+    no_return_ = std::make_unique<StrictMock<NoReturnMock>>();
   }
 
+  // we use protected member variables in test fixtures.
+  // NOLINTNEXTLINE(cppcoreguidelines-non-private-member-variables-in-classes)
   std::unique_ptr<NoReturnMock> no_return_;
   constexpr static std::uint64_t memory_pool_size_ = 1024;
 };

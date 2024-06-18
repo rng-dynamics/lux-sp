@@ -49,7 +49,7 @@ class MemoryPool final {
       return {};
     }
 
-    Entry *entry = &store_[free_index_];
+    Entry *entry = &store_.at(free_index_);
     T *item = &(entry->value_);
     new (item) T{args...};  // placement new
     entry->is_free_ = false;
@@ -90,14 +90,14 @@ class MemoryPool final {
       if (index >= store_size) [[unlikely]] {
         index = 0;
       }
-      if (store_[index].is_free_) {
+      if (store_.at(index).is_free_) {
         break;
       }
     }
     if (index == free_index_) [[unlikely]] {
       return {};
     }
-    assertions_->Assert(store_[index].is_free_, "logic error");
+    assertions_->Assert(store_.at(index).is_free_, "logic error");
     return index;
   }
 
