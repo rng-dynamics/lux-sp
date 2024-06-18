@@ -29,7 +29,11 @@ class Assertions final {
   void FatalError(std::string_view message) noexcept {
     fmt::print(std::cerr, "fatal error: {}\n", message);
     no_return_->QuickExit(EXIT_FAILURE);
+    // GCOV_EXCL_START
+    // These lines are uncovered because NoReturn::QuickExit never returns by
+    // definition.
   }
+  // GCOV_EXCL_STOP
 
  private:
   std::unique_ptr<NoReturn> no_return_;
