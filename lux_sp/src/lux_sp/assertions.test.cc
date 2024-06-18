@@ -13,19 +13,23 @@ class TestLuxSpAssertions : public testing::Test {
   std::unique_ptr<NoReturnMock> no_return_mock_;
 };
 
+// Note: Any death-test should be called ".*DeathTest".
+// See: https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
+class TestLuxSpAssertionsDeathTest : public TestLuxSpAssertions {};
+
 TEST_F(TestLuxSpAssertions, AssertWhenConditionHolds) {
   // function under test
   Assertions{std::move(no_return_mock_)}.Assert(true, "no error");
 }
 
-TEST_F(TestLuxSpAssertions, AssertWhenConditionDoesNotHold) {
+TEST_F(TestLuxSpAssertionsDeathTest, AssertWhenConditionDoesNotHold) {
   EXPECT_DEATH(
       // function under test
       Assertions{std::move(no_return_mock_)}.Assert(false, "simulated error"),
       "simulated error");
 }
 
-TEST_F(TestLuxSpAssertions, FatalError) {
+TEST_F(TestLuxSpAssertionsDeathTest, FatalError) {
   EXPECT_DEATH(
       // function under test
       Assertions{std::move(no_return_mock_)}.FatalError("simulated error"),

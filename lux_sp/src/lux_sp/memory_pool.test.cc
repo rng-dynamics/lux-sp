@@ -23,6 +23,10 @@ class TestLuxSpMemoryPool : public testing::Test {
   constexpr static std::uint64_t memory_pool_size_ = 1024;
 };
 
+// Note: Any death-test should be called ".*DeathTest".
+// See: https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
+class TestLuxSpMemoryPoolDeathTest : public TestLuxSpMemoryPool {};
+
 struct SomeType {
   int content_{};
 };
@@ -66,7 +70,7 @@ TEST_F(TestLuxSpMemoryPool, DeletePasses) {
   memory_pool.Delete(*instance);
 }
 
-TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
+TEST_F(TestLuxSpMemoryPoolDeathTest, DeleteWithNullptrFails) {
   auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{
       std::make_unique<Assertions>(std::move(no_return_))};
 
@@ -75,7 +79,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithNullptrFails) {
       memory_pool.Delete(nullptr), "deallocation request for nullptr");
 }
 
-TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
+TEST_F(TestLuxSpMemoryPoolDeathTest, DeleteWithForeignMemoryAddressFails) {
   auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{
       std::make_unique<Assertions>(std::move(no_return_))};
   const int int_value = 42;
@@ -97,7 +101,7 @@ TEST_F(TestLuxSpMemoryPool, DeleteWithForeignMemoryAddressFails) {
   }
 }
 
-TEST_F(TestLuxSpMemoryPool, DeleteWithInvalidMemoryAddressFails) {
+TEST_F(TestLuxSpMemoryPoolDeathTest, DeleteWithInvalidMemoryAddressFails) {
   auto memory_pool = MemoryPool<SomeType, memory_pool_size_>{
       std::make_unique<Assertions>(std::move(no_return_))};
   const int int_value = 42;
