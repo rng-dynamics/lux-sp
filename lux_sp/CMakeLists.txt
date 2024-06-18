@@ -1,5 +1,7 @@
 set(headers 
     "src/lux_sp/assertions.h"
+    "src/lux_sp/concrete_no_return.h"
+    "src/lux_sp/concrete_system.h"
     "src/lux_sp/memory_pool.h"
     "src/lux_sp/no_return.h"
     "src/lux_sp/system.h"
