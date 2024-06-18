@@ -14,7 +14,8 @@ class TestLuxSpAssertions : public testing::Test {
 };
 
 // Note: Any death-test should be called ".*DeathTest".
-// See: https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
+// See:
+// https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
 class TestLuxSpAssertionsDeathTest : public TestLuxSpAssertions {};
 
 TEST_F(TestLuxSpAssertions, AssertWhenConditionHolds) {

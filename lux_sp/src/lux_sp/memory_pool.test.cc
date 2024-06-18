@@ -24,7 +24,8 @@ class TestLuxSpMemoryPool : public testing::Test {
 };
 
 // Note: Any death-test should be called ".*DeathTest".
-// See: https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
+// See:
+// https://github.com/google/googletest/blob/main/docs/advanced.md#death-tests-and-threads
 class TestLuxSpMemoryPoolDeathTest : public TestLuxSpMemoryPool {};
 
 struct SomeType {
