@@ -5,8 +5,6 @@
 #include <optional>
 
 #include <lux_sp/assertions.h>
-#include <lux_sp/utility/free_functions.h>
-#include <lux_sp/utility/overload.h>
 
 namespace lux_sp {
 
