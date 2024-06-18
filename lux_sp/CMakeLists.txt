@@ -37,7 +37,7 @@ target_link_libraries(lux_sp_tests
 )
 target_include_directories(lux_sp_tests
     PRIVATE
-    "test/"
+    "test/unit"
 )
 target_set_default_settings(lux_sp_tests)
 gtest_discover_tests(lux_sp_tests)
