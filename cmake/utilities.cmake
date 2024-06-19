@@ -28,6 +28,7 @@ function(TARGET_SET_DEFAULT_SETTINGS TARGET)
         if(ENABLE_CODECOVERAGE)
             target_compile_options("${TARGET}" PRIVATE "--coverage")
             target_link_options("${TARGET}" PRIVATE "--coverage")
+            target_compile_definitions("${TARGET}" PUBLIC ENABLE_GCOV)
         endif()
     else()
         message(FATAL_ERROR "Compiler with ID '${CMAKE_CXX_COMPILER_ID}' not supported")
@@ -52,7 +53,7 @@ if (ENABLE_CODECOVERAGE)
         "--gcov-executable" "${GCOV_COMMAND}"
         "--root" "${PROJECT_SOURCE_DIR}"
         "--filter" "${PROJECT_SOURCE_DIR}/lux_sp"
-        "--exclude" ".*.test.cc"  # exclude test files from coverage
+        "--exclude" ".*/test/.*"  # exclude files in test folder from coverage
         "--exclude-unreachable-branches"
         # "--exclude-throw-branches"
         "--cobertura" "${GCOVR_OUTPUT_DIR}/cobertura.xml"

@@ -1,0 +1,2 @@
+ignore:
+  - "**/test/**/*" # ignore folder test/ and all its content
