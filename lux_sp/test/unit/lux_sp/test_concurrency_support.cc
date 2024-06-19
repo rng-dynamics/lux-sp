@@ -8,15 +8,15 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <lux_sp/concurrency_support.h>
 #include <lux_sp/system_mock.h>
-#include <lux_sp/thread_support.h>
 
 namespace lux_sp {
 
 using ::testing::Return;
 using ::testing::StrictMock;
 
-class TestLuxSpThreadSupport : public testing::Test {
+class TestLuxSpConcurrencySupport : public testing::Test {
  protected:
   void SetUp() override {
     system_mock_ = std::make_unique<StrictMock<SystemMock>>();
@@ -25,7 +25,7 @@ class TestLuxSpThreadSupport : public testing::Test {
   std::unique_ptr<SystemMock> system_mock_;
 };
 
-TEST_F(TestLuxSpThreadSupport, SetThreadAffinityToCorePasses) {
+TEST_F(TestLuxSpConcurrencySupport, SetThreadAffinityToCorePasses) {
   EXPECT_CALL(*system_mock_, pthread_setaffinity_np)
       .WillOnce([](
                     // false positive
@@ -37,7 +37,7 @@ TEST_F(TestLuxSpThreadSupport, SetThreadAffinityToCorePasses) {
         EXPECT_TRUE(CPU_ISSET(0, cpuset));
         return 0;
       });
-  const auto threads = ThreadSupport{std::move(system_mock_)};
+  const auto threads = ConcurrencySupport{std::move(system_mock_)};
 
   // function under test
   const bool is_success = threads.SetThreadAffinityToCore(0);
@@ -45,7 +45,7 @@ TEST_F(TestLuxSpThreadSupport, SetThreadAffinityToCorePasses) {
   ASSERT_TRUE(is_success);
 }
 
-TEST_F(TestLuxSpThreadSupport,
+TEST_F(TestLuxSpConcurrencySupport,
        SetThreadAffinityToCoreWhenCoreIdentifierIsNegativeFails) {
   EXPECT_CALL(*system_mock_, pthread_setaffinity_np)
       .WillOnce([](pthread_t thread, std::size_t /* cpusetsize */,
@@ -54,7 +54,7 @@ TEST_F(TestLuxSpThreadSupport,
         EXPECT_EQ(0, CPU_COUNT(cpuset));
         return -1;
       });
-  const auto threads = ThreadSupport{std::move(system_mock_)};
+  const auto threads = ConcurrencySupport{std::move(system_mock_)};
 
   // function under test
   const bool is_success = threads.SetThreadAffinityToCore(-1);
@@ -62,9 +62,9 @@ TEST_F(TestLuxSpThreadSupport,
   ASSERT_FALSE(is_success);
 }
 
-TEST_F(TestLuxSpThreadSupport, SetTrheadAffinityToCoreFails) {
+TEST_F(TestLuxSpConcurrencySupport, SetTrheadAffinityToCoreFails) {
   EXPECT_CALL(*system_mock_, pthread_setaffinity_np).WillOnce(Return(-1));
-  const auto threads = ThreadSupport{std::move(system_mock_)};
+  const auto threads = ConcurrencySupport{std::move(system_mock_)};
 
   // function under test
   const bool is_success = threads.SetThreadAffinityToCore(0);

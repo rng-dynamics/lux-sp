@@ -8,15 +8,15 @@
 
 namespace lux_sp {
 
-class ThreadSupport final {
+class ConcurrencySupport final {
  public:
-  explicit ThreadSupport(std::unique_ptr<System> system) noexcept
+  explicit ConcurrencySupport(std::unique_ptr<System> system) noexcept
       : system_{std::move(system)} {}
-  ~ThreadSupport() = default;
-  ThreadSupport(const ThreadSupport &) = delete;
-  ThreadSupport(ThreadSupport &&) noexcept = default;
-  ThreadSupport &operator=(const ThreadSupport &) = delete;
-  ThreadSupport &operator=(ThreadSupport &&) noexcept = default;
+  ~ConcurrencySupport() = default;
+  ConcurrencySupport(const ConcurrencySupport &) = delete;
+  ConcurrencySupport(ConcurrencySupport &&) noexcept = default;
+  ConcurrencySupport &operator=(const ConcurrencySupport &) = delete;
+  ConcurrencySupport &operator=(ConcurrencySupport &&) noexcept = default;
 
   [[nodiscard]] bool SetThreadAffinityToCore(int core_id) const noexcept {
     auto cpu_set = cpu_set_t{};
