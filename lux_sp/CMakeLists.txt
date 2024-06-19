@@ -5,7 +5,7 @@ set(headers
     "src/lux_sp/memory_pool.h"
     "src/lux_sp/no_return.h"
     "src/lux_sp/system.h"
-    "src/lux_sp/thread_support.h"
+    "src/lux_sp/concurrency_support.h"
 )
 
 ## Library
@@ -29,7 +29,7 @@ include(GoogleTest)
 set(test_sources
     "test/unit/lux_sp/test_assertions.cc"
     "test/unit/lux_sp/test_memory_pool.cc"
-    "test/unit/lux_sp/test_thread_support.cc"
+    "test/unit/lux_sp/test_concurrency_support.cc"
 )
 add_executable(lux_sp_tests ${test_sources})
 target_link_libraries(lux_sp_tests 
