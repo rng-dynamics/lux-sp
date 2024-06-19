@@ -8,8 +8,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <lux_sp/system_mock.h>
 #include <lux_sp/concurrency_support.h>
+#include <lux_sp/system_mock.h>
 
 namespace lux_sp {
 
