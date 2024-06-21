@@ -75,6 +75,18 @@ TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndex) {
   EXPECT_TRUE(queue.IsEmpty());
 }
 
+TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndexWrapsAround) {
+  constexpr std::int64_t capacity = 1;
+  auto queue = SpscLockFreeQueue<SomeType, capacity>{};
+  **queue.NextEntryToWriteTo() = SomeType{42};
+  queue.UpdateWriteIndex();
+
+  // function under test
+  queue.UpdateReadIndex();
+
+  EXPECT_TRUE(queue.IsEmpty());
+}
+
 TEST_F(TestLuxSpSpscLockFreeQueue, Capacity) {
   auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
 
