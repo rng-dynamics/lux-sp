@@ -64,11 +64,11 @@ class SpscLockFreeQueue final {
   }
 
   [[nodiscard]] bool IsEmpty() const noexcept {
-    return Size() == 0;
+    return n_elements_ == 0;
   }
 
   [[nodiscard]] bool IsFull() const noexcept {
-    return Size() == Capacity();
+    return n_elements_ == Capacity();
   }
 
  private:
