@@ -9,7 +9,7 @@
 namespace lux_sp {
 
 template <typename T, std::int64_t Capacity>
-    requires std::default_initializable<T>
+  requires std::default_initializable<T>
 class MemoryPool final {
  private:
   struct Entry {
