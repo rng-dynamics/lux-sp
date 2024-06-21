@@ -8,7 +8,7 @@
 
 namespace lux_sp {
 
-template <typename T, std::uint64_t Capacity>
+template <typename T, std::int64_t Capacity>
 class MemoryPool final {
  private:
   struct Entry {
@@ -42,7 +42,7 @@ class MemoryPool final {
 
   template <typename... Args>
   [[nodiscard]] std::optional<T *> CreateNew(Args... args) noexcept {
-    std::optional<uint64_t> next_free_index = ComputeNextFreeIndex();
+    std::optional<int64_t> next_free_index = ComputeNextFreeIndex();
     if (!next_free_index) [[unlikely]] {
       return {};
     }
@@ -79,11 +79,11 @@ class MemoryPool final {
     return reinterpret_cast<Entry *>(value);
   }
 
-  [[nodiscard]] std::optional<std::uint64_t> ComputeNextFreeIndex()
+  [[nodiscard]] std::optional<std::int64_t> ComputeNextFreeIndex()
       const noexcept {
-    const std::uint64_t store_size = std::ssize(store_);
+    const std::int64_t store_size = std::ssize(store_);
     auto index = free_index_;
-    for (std::uint64_t loop_index = 0; loop_index < store_size; ++loop_index) {
+    for (std::int64_t loop_index = 0; loop_index < store_size; ++loop_index) {
       index += 1;
       if (index >= store_size) [[unlikely]] {
         index = 0;
@@ -101,7 +101,7 @@ class MemoryPool final {
 
   std::unique_ptr<Assertions> assertions_;
   std::array<Entry, Capacity> store_{};
-  std::uint64_t free_index_ = 0;
+  std::int64_t free_index_ = 0;
 };
 
 }  // namespace lux_sp
