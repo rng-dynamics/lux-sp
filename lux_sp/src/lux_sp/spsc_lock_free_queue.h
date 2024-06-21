@@ -22,7 +22,7 @@ class SpscLockFreeQueue final {
   SpscLockFreeQueue() noexcept = default;
   ~SpscLockFreeQueue() noexcept = default;
 
-  [[nodiscard]] std::optional<T *> NextToWriteTo() const noexcept {
+  [[nodiscard]] std::optional<T *> NextEntryToWriteTo() noexcept {
     if (IsFull()) [[unlikely]] {
       return {};
     }
@@ -37,7 +37,7 @@ class SpscLockFreeQueue final {
     ++n_elements_;
   }
 
-  [[nodiscard]] std::optional<T *> NextToRead() const noexcept {
+  [[nodiscard]] std::optional<T *> NextEntryToRead() noexcept {
     if (IsEmpty()) [[unlikely]] {
       return {};
     }
