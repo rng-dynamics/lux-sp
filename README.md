@@ -21,3 +21,4 @@ Content
 
 - [Concurrency support](lux_sp/src/lux_sp/concurrency_support.h)
 - [Memory pool](lux_sp/src/lux_sp/memory_pool.h)
+- [Lock-fee queue](lux_sp/src/lux_sp/spsc_lock_free_queue.h)
