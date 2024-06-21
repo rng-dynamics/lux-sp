@@ -3,7 +3,6 @@
 # -llvmlibc-*, llvm libc specific warnings
 # -llvm-header-gurard, we use "#pragma once"
 # -modernize-use-trailing-return-type, we do not use trailing return type
-# -misc-non-private-member-variables-in-classes, this lint is covered by cppcoreguidelines-non-private-member-variables-in-classes
 ---
 Checks: >
   *,
@@ -11,8 +10,7 @@ Checks: >
   -fuchsia-*,
   -llvmlibc-*,
   -llvm-header-guard,
-  -modernize-use-trailing-return-type,
-  -misc-non-private-member-variables-in-classes
+  -modernize-use-trailing-return-type
 
 # WarningsAsErrors: ''
 # SystemHeaders:   false
