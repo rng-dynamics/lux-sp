@@ -5,23 +5,22 @@
 #include <cstdint>
 #include <optional>
 
-namespace lux_sp {
+namespace lux_sp::spsc {
 
-// TODO(as): rename
 template <typename T, std::uint64_t Cap>
   requires std::default_initializable<T>
-class SpscLockFreeQueue final {
+class LockFreeQueue final {
   static_assert(
       Cap > 0,
       "Given capacity value for lock-free queue is less or equal to zero.");
 
  public:
-  SpscLockFreeQueue(const SpscLockFreeQueue &) = delete;
-  SpscLockFreeQueue(SpscLockFreeQueue &&) = delete;
-  SpscLockFreeQueue &operator=(const SpscLockFreeQueue &) = delete;
-  SpscLockFreeQueue &operator=(SpscLockFreeQueue &&) = delete;
-  SpscLockFreeQueue() noexcept = default;
-  ~SpscLockFreeQueue() noexcept = default;
+  LockFreeQueue(const LockFreeQueue &) = delete;
+  LockFreeQueue(LockFreeQueue &&) = delete;
+  LockFreeQueue &operator=(const LockFreeQueue &) = delete;
+  LockFreeQueue &operator=(LockFreeQueue &&) = delete;
+  LockFreeQueue() noexcept = default;
+  ~LockFreeQueue() noexcept = default;
 
   [[nodiscard]] std::optional<T *> NextEntryToWriteTo() noexcept {
     if (IsFull()) [[unlikely]] {
@@ -78,4 +77,4 @@ class SpscLockFreeQueue final {
   std::atomic_int64_t n_elements_{0};
 };
 
-}  // namespace lux_sp
+}  // namespace lux_sp::spsc

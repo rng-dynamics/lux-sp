@@ -5,7 +5,7 @@ set(headers
     "src/lux_sp/concurrency_support.h"
     "src/lux_sp/memory_pool.h"
     "src/lux_sp/no_return.h"
-    "src/lux_sp/spsc_lock_free_queue.h"
+    "src/lux_sp/spsc/lock_free_queue.h"
     "src/lux_sp/system.h"
 )
 
@@ -28,10 +28,10 @@ install(TARGETS lux_sp FILE_SET HEADERS)
 ## Unit tests
 include(GoogleTest)
 set(test_sources
+    "test/unit/lux_sp/spsc/test_lock_free_queue.cc"
     "test/unit/lux_sp/test_assertions.cc"
     "test/unit/lux_sp/test_concurrency_support.cc"
     "test/unit/lux_sp/test_memory_pool.cc"
-    "test/unit/lux_sp/test_spsc_lock_free_queue.cc"
 )
 add_executable(lux_sp_tests ${test_sources})
 target_link_libraries(lux_sp_tests 

@@ -3,9 +3,9 @@
 
 #include <gtest/gtest.h>
 
-#include <lux_sp/spsc_lock_free_queue.h>
+#include <lux_sp/spsc/lock_free_queue.h>
 
-namespace lux_sp {
+namespace lux_sp::spsc {
 
 class TestLuxSpSpscLockFreeQueue : public testing::Test {};
 
@@ -16,7 +16,7 @@ struct SomeType {
 constexpr std::int64_t kCapacity = 8;
 
 TEST_F(TestLuxSpSpscLockFreeQueue, NextEntryToWriteToHasValue) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   const std::optional<SomeType *> value_ptr = queue.NextEntryToWriteTo();
@@ -27,7 +27,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, NextEntryToWriteToHasValue) {
 TEST_F(TestLuxSpSpscLockFreeQueue,
        WhenQueueIsFullThenNextEntryToWriteDoesNotHaveValue) {
   constexpr std::int64_t capacity = 1;
-  auto queue = SpscLockFreeQueue<SomeType, capacity>{};
+  auto queue = LockFreeQueue<SomeType, capacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -38,7 +38,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue,
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, UpdateWriteIndex) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   queue.UpdateWriteIndex();
@@ -47,7 +47,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, UpdateWriteIndex) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, NextEntryToRead) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -59,7 +59,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, NextEntryToRead) {
 
 TEST_F(TestLuxSpSpscLockFreeQueue,
        WhenQueueIsEmptyThenNextEntryToReadDoesNotHaveValue) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   const std::optional<SomeType *> value_ptr = queue.NextEntryToRead();
@@ -68,7 +68,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue,
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndex) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -80,7 +80,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndex) {
 
 TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndexWrapsAround) {
   constexpr std::int64_t capacity = 1;
-  auto queue = SpscLockFreeQueue<SomeType, capacity>{};
+  auto queue = LockFreeQueue<SomeType, capacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -91,7 +91,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, UpdateReadIndexWrapsAround) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, Capacity) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   const std::int64_t capacity = queue.Capacity();
@@ -100,7 +100,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, Capacity) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, Size) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -111,7 +111,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, Size) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, IsEmptyWhenEmpty) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   const bool is_empty = queue.IsEmpty();
@@ -120,7 +120,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, IsEmptyWhenEmpty) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, NotIsEmptyWhenNotEmpty) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -131,7 +131,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, NotIsEmptyWhenNotEmpty) {
 }
 
 TEST_F(TestLuxSpSpscLockFreeQueue, NotIsFullWhenNotFull) {
-  auto queue = SpscLockFreeQueue<SomeType, kCapacity>{};
+  auto queue = LockFreeQueue<SomeType, kCapacity>{};
 
   // function under test
   const bool is_full = queue.IsFull();
@@ -141,7 +141,7 @@ TEST_F(TestLuxSpSpscLockFreeQueue, NotIsFullWhenNotFull) {
 
 TEST_F(TestLuxSpSpscLockFreeQueue, IsFullWhenFull) {
   constexpr std::int64_t capacity = 1;
-  auto queue = SpscLockFreeQueue<SomeType, capacity>{};
+  auto queue = LockFreeQueue<SomeType, capacity>{};
   **queue.NextEntryToWriteTo() = SomeType{42};
   queue.UpdateWriteIndex();
 
@@ -151,4 +151,4 @@ TEST_F(TestLuxSpSpscLockFreeQueue, IsFullWhenFull) {
   EXPECT_TRUE(is_full);
 }
 
-}  // namespace lux_sp
+}  // namespace lux_sp::spsc
