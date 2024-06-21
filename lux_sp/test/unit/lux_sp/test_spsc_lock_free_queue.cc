@@ -1,3 +1,6 @@
+#include <cstdint>
+#include <optional>
+
 #include <gtest/gtest.h>
 
 #include <lux_sp/spsc_lock_free_queue.h>

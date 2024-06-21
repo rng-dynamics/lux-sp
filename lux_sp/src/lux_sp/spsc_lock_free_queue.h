@@ -27,13 +27,14 @@ class SpscLockFreeQueue final {
     if (IsFull()) [[unlikely]] {
       return {};
     }
-    return &store_[write_index_];
+    return &store_.at(write_index_);
   }
 
   void UpdateWriteIndex() noexcept {
-    ++write_index_;
-    if (write_index_ >= std::ssize(store_)) [[unlikely]] {
+    if (write_index_ + 1 >= std::ssize(store_)) [[unlikely]] {
       write_index_ = 0;
+    } else {
+      ++write_index_;
     }
     ++n_elements_;
   }
@@ -42,13 +43,14 @@ class SpscLockFreeQueue final {
     if (IsEmpty()) [[unlikely]] {
       return {};
     }
-    return &store_[read_index_];
+    return &store_.at(read_index_);
   }
 
   void UpdateReadIndex() noexcept {
-    ++read_index_;
-    if (read_index_ >= std::ssize(store_)) [[unlikely]] {
+    if (read_index_ + 1 >= std::ssize(store_)) [[unlikely]] {
       read_index_ = 0;
+    } else {
+      ++read_index_;
     }
     --n_elements_;
   }

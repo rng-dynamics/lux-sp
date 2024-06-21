@@ -1,7 +1,7 @@
 # -altera-*, altera are fpga specific lints
 # -fuchsia-*,
 # -llvmlibc-*, llvm libc specific warnings
-# -llvm-header-gurard, we are using "#pragma once"
+# -llvm-header-gurard, we use "#pragma once"
 # -modernize-use-trailing-return-type, we do not use trailing return type
 # -misc-non-private-member-variables-in-classes, this lint is covered by cppcoreguidelines-non-private-member-variables-in-classes
 ---

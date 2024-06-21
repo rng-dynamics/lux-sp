@@ -1,6 +1,14 @@
 #
 # Test specific clang-tidy configuration file
 #
+#  # We use protected member variables in test fixtures.
+#  -cppcoreguidelines-non-private-member-variables-in-classes,
+#  -misc-non-private-member-variables-in-classes,
+#  # We use magic numbers in tests.
+#  -cppcoreguidelines-avoid-magic-numbers,
+#  -readability-magic-numbers,
+#  # We use unchecked optional access in places where a non-existing value should break the test anyway.
+#  -bugprone-unchecked-optional-access,
 
 ---
 InheritParentConfig: true
@@ -9,4 +17,5 @@ Checks: >
   -misc-non-private-member-variables-in-classes,
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-magic-numbers,
+  -bugprone-unchecked-optional-access,
 ...
