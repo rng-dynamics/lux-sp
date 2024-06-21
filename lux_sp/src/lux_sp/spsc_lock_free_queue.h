@@ -7,6 +7,7 @@
 
 namespace lux_sp {
 
+// TODO(as): rename
 template <typename T, std::uint64_t Cap>
   requires std::default_initializable<T>
 class SpscLockFreeQueue final {
