@@ -7,13 +7,9 @@
 
 namespace lux_sp::spsc {
 
-template <typename T, std::int64_t capacity>
-  requires std::default_initializable<T>
+template <std::default_initializable T, std::int64_t capacity>
+  requires(capacity > 0)
 class LockFreeQueue final {
-  static_assert(
-      capacity > 0,
-      "Given capacity value for lock-free queue is less or equal to zero.");
-
  public:
   LockFreeQueue(const LockFreeQueue &) = delete;
   LockFreeQueue(LockFreeQueue &&) = delete;
