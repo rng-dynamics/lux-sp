@@ -7,7 +7,7 @@
 
 namespace lux_sp::spsc {
 
-template <typename T, std::uint64_t Cap>
+template <typename T, std::int64_t Cap>
   requires std::default_initializable<T>
 class LockFreeQueue final {
   static_assert(
