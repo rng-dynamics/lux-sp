@@ -23,7 +23,7 @@ class TestLuxSpMemoryPool : public testing::Test {
   }
 
   std::unique_ptr<NoReturnMock> no_return_;
-  constexpr static std::uint64_t memory_pool_size_ = 1024;
+  constexpr static std::int64_t memory_pool_size_ = 1024;
 };
 
 // Note: Any death-test should be called ".*DeathTest".

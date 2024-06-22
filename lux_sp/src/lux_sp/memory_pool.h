@@ -8,7 +8,8 @@
 
 namespace lux_sp {
 
-template <typename T, std::uint64_t Capacity>
+template <std::default_initializable T, std::int64_t capacity>
+  requires(capacity > 0)
 class MemoryPool final {
  private:
   struct Entry {
@@ -20,9 +21,6 @@ class MemoryPool final {
       offsetof(Entry, value_);
   static_assert(offset_of_value_in_entry == 0,
                 "T value should be first entry in memory pool entry");
-  static_assert(
-      Capacity > 0,
-      "Given capacity value for memory pool is less or equal to zero.");
 
  public:
   explicit MemoryPool(std::unique_ptr<Assertions> assertions)
@@ -42,7 +40,7 @@ class MemoryPool final {
 
   template <typename... Args>
   [[nodiscard]] std::optional<T *> CreateNew(Args... args) noexcept {
-    std::optional<uint64_t> next_free_index = ComputeNextFreeIndex();
+    std::optional<int64_t> next_free_index = ComputeNextFreeIndex();
     if (!next_free_index) [[unlikely]] {
       return {};
     }
@@ -79,11 +77,11 @@ class MemoryPool final {
     return reinterpret_cast<Entry *>(value);
   }
 
-  [[nodiscard]] std::optional<std::uint64_t> ComputeNextFreeIndex()
+  [[nodiscard]] std::optional<std::int64_t> ComputeNextFreeIndex()
       const noexcept {
-    const std::uint64_t store_size = std::ssize(store_);
+    const std::int64_t store_size = std::ssize(store_);
     auto index = free_index_;
-    for (std::uint64_t loop_index = 0; loop_index < store_size; ++loop_index) {
+    for (std::int64_t loop_index = 0; loop_index < store_size; ++loop_index) {
       index += 1;
       if (index >= store_size) [[unlikely]] {
         index = 0;
@@ -100,8 +98,8 @@ class MemoryPool final {
   }
 
   std::unique_ptr<Assertions> assertions_;
-  std::array<Entry, Capacity> store_{};
-  std::uint64_t free_index_ = 0;
+  std::array<Entry, capacity> store_{};
+  std::int64_t free_index_ = 0;
 };
 
 }  // namespace lux_sp
