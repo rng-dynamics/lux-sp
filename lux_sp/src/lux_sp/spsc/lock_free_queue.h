@@ -7,11 +7,11 @@
 
 namespace lux_sp::spsc {
 
-template <typename T, std::int64_t Cap>
+template <typename T, std::int64_t capacity>
   requires std::default_initializable<T>
 class LockFreeQueue final {
   static_assert(
-      Cap > 0,
+      capacity > 0,
       "Given capacity value for lock-free queue is less or equal to zero.");
 
  public:
@@ -71,7 +71,7 @@ class LockFreeQueue final {
   }
 
  private:
-  std::array<T, Cap> store_{};
+  std::array<T, capacity> store_{};
   std::atomic_int64_t write_index_{0};
   std::atomic_int64_t read_index_{0};
   std::atomic_int64_t n_elements_{0};

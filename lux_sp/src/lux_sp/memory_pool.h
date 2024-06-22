@@ -8,7 +8,7 @@
 
 namespace lux_sp {
 
-template <typename T, std::int64_t Capacity>
+template <typename T, std::int64_t capacity>
   requires std::default_initializable<T>
 class MemoryPool final {
  private:
@@ -22,7 +22,7 @@ class MemoryPool final {
   static_assert(offset_of_value_in_entry == 0,
                 "T value should be first entry in memory pool entry");
   static_assert(
-      Capacity > 0,
+      capacity > 0,
       "Given capacity value for memory pool is less or equal to zero.");
 
  public:
@@ -101,7 +101,7 @@ class MemoryPool final {
   }
 
   std::unique_ptr<Assertions> assertions_;
-  std::array<Entry, Capacity> store_{};
+  std::array<Entry, capacity> store_{};
   std::int64_t free_index_ = 0;
 };
 
